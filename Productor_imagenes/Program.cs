@@ -44,7 +44,7 @@ namespace Productor_imagenes
 
                         // Publicar el mensaje
                         channel.BasicPublish(EXCHANGE, ROUTING_KEY, null, body);
-                        Console.WriteLine($"[Productor] Enviado: {payload}");
+                        Console.WriteLine($"[Productor] Enviada Imagen: Id:{message.Id} Timestamp: {message.Timestamp} Type: {message.Type} Payload: {message.Payload}");
                     }
                 }
             }
