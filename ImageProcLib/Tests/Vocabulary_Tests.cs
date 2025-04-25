@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using ImageProcessingLib.Vocabulary;
+using ImageProcLib.Vocabulary;
 using Xunit;
 
 namespace ImageProcLib.Tests
