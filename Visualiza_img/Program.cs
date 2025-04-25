@@ -4,9 +4,18 @@ using ImageProcLib.Vocabulary;
 using ImageProcLib.Constants;
 using System;
 using System.Text;
+using ImageProcLib.Interfaces;
 
 namespace Visualiza_img
 {
+    internal class ConsoleImageVisualizer : IVisualizador_Imagen
+    {
+        public void ImageVisualize(int id, DateTime timestamp, string type, string payload)
+        {
+            Console.WriteLine($"[Visualizador] Recibida Imagen: Id:{id} Timestamp: {timestamp} Type: {type} Payload: {payload}");
+        }
+    }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -16,6 +25,10 @@ namespace Visualiza_img
 
             // Configurar la conexión a RabbitMQ
             var factory = new ConnectionFactory() { HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP };
+
+            // Crear el visualizador de imágenes, en este caso es por consola
+            var imageVisualizer = new ConsoleImageVisualizer();
+
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -36,7 +49,7 @@ namespace Visualiza_img
                 {
                     // Decodificar el mensaje recibido
                     var message = MessageVocabulary.DecodeMessage(ea.Body.ToArray());
-                    Console.WriteLine($"[Visualizador] Recibida Imagen: Id:{message.Id} Timestamp: {message.Timestamp} Type: {message.Type} Payload: {message.Payload}");
+                    imageVisualizer.ImageVisualize(message.Id, message.Timestamp, message.Type, message.Payload);
                 };
 
                 // Iniciar el consumo de mensajes
