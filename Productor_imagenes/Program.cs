@@ -1,4 +1,9 @@
-﻿namespace Productor_imagenes
+﻿using RabbitMQ.Client;
+using ImageProcLib.Vocabulary;
+using System;
+using System.Text;
+
+namespace Productor_imagenes
 {
     internal class Program
     {

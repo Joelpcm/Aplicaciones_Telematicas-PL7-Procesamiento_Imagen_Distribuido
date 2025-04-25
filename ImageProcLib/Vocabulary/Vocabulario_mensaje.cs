@@ -1,8 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
-using static ImageProcessingLib.Vocabulary.MessageVocabulary;
 
-namespace ImageProcessingLib.Vocabulary
+namespace ImageProcLib.Vocabulary
 {
     public static class MessageVocabulary
     {
