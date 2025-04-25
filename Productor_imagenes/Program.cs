@@ -8,7 +8,7 @@ using ImageProcLib.Interfaces;
 
 namespace Productor_imagenes
 {
-    public class RandomImageSource : IFuente_Imagen
+    internal class RandomImageSource : IFuente_Imagen
     {
         private readonly Random _random = new Random();
 
