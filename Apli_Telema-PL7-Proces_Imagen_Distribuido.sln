@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procesado_img", "Procesado_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trabaja_img", "Trabaja_img\Trabaja_img.csproj", "{44F7E061-050A-4DBF-8A27-E7018388E30E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcLib", "ImageProcLib\ImageProcLib.csproj", "{44053B3A-0C2A-4FC5-B349-1DA942A04685}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{44F7E061-050A-4DBF-8A27-E7018388E30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F7E061-050A-4DBF-8A27-E7018388E30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F7E061-050A-4DBF-8A27-E7018388E30E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44053B3A-0C2A-4FC5-B349-1DA942A04685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44053B3A-0C2A-4FC5-B349-1DA942A04685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44053B3A-0C2A-4FC5-B349-1DA942A04685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44053B3A-0C2A-4FC5-B349-1DA942A04685}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
