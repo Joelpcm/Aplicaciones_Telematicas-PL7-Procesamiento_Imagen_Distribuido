@@ -107,23 +107,7 @@ namespace Visualiza_img
             {
                 Console.WriteLine($"[Visualizador] Error al procesar imagen: {ex.Message}");
             }
-        }
-
-        ~WindowImageVisualizer()
-        {
-            // Clean up window resources when object is destroyed
-            if (_windowInitialized)
-            {
-                try
-                {
-                    Cv2.DestroyWindow(WindowName);
-                }
-                catch (Exception)
-                {
-                    // Suppress cleanup exceptions
-                }
-            }
-        }
+        }   
     }
 
     internal class Program
@@ -164,7 +148,7 @@ namespace Visualiza_img
                     var message = MessageVocabulary.DecodeMessage(ea.Body.ToArray());
 
                     // Agregar la imagen al ordenador
-                    if (message.Type == "Image.Raw")
+                    if (message.Type == "Image.Result")
                     {
                         imageSorter.AddImage(message.Id, message.Payload, message.Timestamp, message.Type);
                     }
