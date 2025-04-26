@@ -13,7 +13,7 @@ namespace ImageProcLib.Tests
             // Arrange
             int id = 1;
             string type = "Image.Raw";
-            string payload = "TestPayload";
+            byte[] payload = new byte[] { 0x01, 0x01 };
 
             // Act
             var message = MessageVocabulary.CreateMessage(id, type, payload);
@@ -33,7 +33,7 @@ namespace ImageProcLib.Tests
             {
                 Id = 1,
                 Type = "Image.Raw",
-                Payload = "TestPayload",
+                Payload = new byte[] { 0x01, 0x01 },
                 Timestamp = DateTime.UtcNow
             };
 
@@ -53,7 +53,7 @@ namespace ImageProcLib.Tests
             {
                 Id = 1,
                 Type = "Image.Raw",
-                Payload = "TestPayload",
+                Payload = new byte[] { 0x01, 0x01 },
                 Timestamp = DateTime.UtcNow
             };
             var encodedMessage = MessageVocabulary.EncodeMessage(originalMessage);

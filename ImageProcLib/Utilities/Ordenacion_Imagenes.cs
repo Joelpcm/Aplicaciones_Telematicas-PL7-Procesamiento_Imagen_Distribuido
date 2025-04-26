@@ -5,7 +5,7 @@ namespace ImageProcLib.Utilities
     public class ImageData
     {
         public required int Id { get; set; } 
-        public required string Image { get; set; } 
+        public required byte[] Image { get; set; } 
         public DateTime Timestamp { get; set; } 
         public required string Type { get; set; } 
     }
@@ -15,7 +15,7 @@ namespace ImageProcLib.Utilities
         private readonly ConcurrentDictionary <int, ImageData> _imageBuffer = new();
         private int _expectedId = 0;
 
-        public void AddImage(int id, string image, DateTime timestamp, string type)
+        public void AddImage(int id, byte[] image, DateTime timestamp, string type)
         {
             var imageData = new ImageData
             {

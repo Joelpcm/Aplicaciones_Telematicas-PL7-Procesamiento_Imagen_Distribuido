@@ -8,6 +8,6 @@ namespace ImageProcLib.Interfaces
 {
     public interface IFuente_Imagen
     {
-        string GetNextImage();
+        byte[] GetNextImage();
     }
 }

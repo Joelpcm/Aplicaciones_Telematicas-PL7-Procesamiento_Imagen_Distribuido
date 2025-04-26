@@ -10,7 +10,7 @@ namespace ImageProcLib.Vocabulary
         {
             public int Id { get; set; } // Identificador del mensaje
             public required string Type { get; set; } // Tipo de mensaje (e.g., "Image.Raw", "Image.Result")
-            public required string Payload { get; set; } // Contenido del mensaje
+            public required byte[] Payload { get; set; } // Contenido del mensaje
             public DateTime Timestamp { get; set; } // Marca de tiempo
         }
 
@@ -55,7 +55,7 @@ namespace ImageProcLib.Vocabulary
         }
 
         // Crear un mensaje
-        public static Message CreateMessage(int id, string type, string payload)
+        public static Message CreateMessage(int id, string type, byte[] payload)
         {
             return new Message
             {

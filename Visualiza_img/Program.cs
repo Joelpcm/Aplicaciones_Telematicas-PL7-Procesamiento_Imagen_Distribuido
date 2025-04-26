@@ -4,18 +4,125 @@ using ImageProcLib.Vocabulary;
 using ImageProcLib.Constants;
 using ImageProcLib.Interfaces;
 using ImageProcLib.Utilities;
+using OpenCvSharp;
 using System;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 
 namespace Visualiza_img
 {
-    internal class ConsoleImageVisualizer : IVisualizador_Imagen
+    internal class WindowImageVisualizer : IVisualizador_Imagen
     {
-        public void ImageVisualize(int id, DateTime timestamp, string type, string payload)
+        private const string WindowName = "Image Visualizer";
+        private bool _windowInitialized = false;
+        private readonly ConcurrentQueue<(int id, DateTime timestamp, string type, Mat image)> _imageQueue = new();
+        private readonly Thread _uiThread;
+
+        public WindowImageVisualizer()
         {
-            Console.WriteLine($"[Visualizador] Recibida Imagen: Id:{id} Timestamp: {timestamp} Type: {type} Payload: {payload}");
+            // Inicializar la ventana en el hilo
+            _uiThread = new Thread(UILoop)
+            {
+                IsBackground = true,
+                Name = "OpenCV UI Thread"
+            };
+            _uiThread.Start();
+
+            Console.WriteLine("[Visualizador] Window initialized");
+        }
+
+        private void UILoop()
+        {
+            try
+            {
+                // Inicializar ventana en este hilo
+                Cv2.NamedWindow(WindowName, WindowFlags.AutoSize | WindowFlags.KeepRatio);
+                _windowInitialized = true;
+
+                Mat? lastImage = null;
+
+                while (true)
+                {
+                    // Procesar imágenes en cola
+                    if (_imageQueue.TryDequeue(out var imageData))
+                    {
+                        var (id, timestamp, type, image) = imageData;
+
+                        // Mostrar información en la imagen
+                        Cv2.PutText(image, $"ID: {id} | {timestamp:HH:mm:ss.fff}", new Point(10, 20),
+                                    HersheyFonts.HersheySimplex, 0.5, Scalar.White);
+                        Cv2.PutText(image, $"Type: {type}", new Point(10, 40),
+                                    HersheyFonts.HersheySimplex, 0.5, Scalar.White);
+
+                        // Mostrar la imagen
+                        Cv2.ImShow(WindowName, image);
+                        lastImage = image;
+
+                        Console.WriteLine($"[Visualizador] Showing image: Id:{id} Timestamp:{timestamp}");
+                    }
+                    else if (lastImage != null)
+                    {
+                        // Mantener mostrando la última imagen mientras no hay nueva
+                        Cv2.ImShow(WindowName, lastImage);
+                    }
+
+                    // Procesar eventos de GUI
+                    int key = Cv2.WaitKey(30);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Visualizador] Error en el hilo de UI: {ex.Message}");
+            }
+            finally
+            {
+                if (_windowInitialized)
+                {
+                    Cv2.DestroyWindow(WindowName);
+                }
+            }
+        }
+
+
+        public void ImageVisualize(int id, DateTime timestamp, string type, byte[] payload)
+        {
+            try
+            {
+                // Convertir a OpenCV Mat
+                Mat image = Cv2.ImDecode(payload, ImreadModes.Color);
+
+                if (image.Empty())
+                {
+                    Console.WriteLine($"[Visualizador] Error: Image {id} is empty");
+                    return;
+                }
+
+                // Poner en cola para mostrar en el hilo de UI
+                _imageQueue.Enqueue((id, timestamp, type, image));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Visualizador] Error al procesar imagen: {ex.Message}");
+            }
+        }
+
+        ~WindowImageVisualizer()
+        {
+            // Clean up window resources when object is destroyed
+            if (_windowInitialized)
+            {
+                try
+                {
+                    Cv2.DestroyWindow(WindowName);
+                }
+                catch (Exception)
+                {
+                    // Suppress cleanup exceptions
+                }
+            }
         }
     }
 
@@ -30,7 +137,7 @@ namespace Visualiza_img
             var factory = new ConnectionFactory() { HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP };
 
             // Crear el visualizador de imágenes, en este caso es por consola
-            var imageVisualizer = new ConsoleImageVisualizer();
+            var imageVisualizer = new WindowImageVisualizer();
 
             // Crear el ordenador de imagenes
             var imageSorter = new Image_Sorter();
@@ -57,7 +164,7 @@ namespace Visualiza_img
                     var message = MessageVocabulary.DecodeMessage(ea.Body.ToArray());
 
                     // Agregar la imagen al ordenador
-                    if (message.Type == "Image.Result")
+                    if (message.Type == "Image.Raw")
                     {
                         imageSorter.AddImage(message.Id, message.Payload, message.Timestamp, message.Type);
                     }
