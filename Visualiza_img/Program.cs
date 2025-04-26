@@ -2,9 +2,12 @@
 using RabbitMQ.Client.Events;
 using ImageProcLib.Vocabulary;
 using ImageProcLib.Constants;
+using ImageProcLib.Interfaces;
+using ImageProcLib.Utilities;
 using System;
 using System.Text;
-using ImageProcLib.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
+
 
 namespace Visualiza_img
 {
@@ -29,6 +32,9 @@ namespace Visualiza_img
             // Crear el visualizador de imágenes, en este caso es por consola
             var imageVisualizer = new ConsoleImageVisualizer();
 
+            // Crear el ordenador de imagenes
+            var imageSorter = new Image_Sorter();
+
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -49,7 +55,19 @@ namespace Visualiza_img
                 {
                     // Decodificar el mensaje recibido
                     var message = MessageVocabulary.DecodeMessage(ea.Body.ToArray());
-                    imageVisualizer.ImageVisualize(message.Id, message.Timestamp, message.Type, message.Payload);
+
+                    // Agregar la imagen al ordenador
+                    if (message.Type == "Image.Result")
+                    {
+                        imageSorter.AddImage(message.Id, message.Payload, message.Timestamp, message.Type);
+                    }
+
+                    // Intentar mostrar las imágenes en orden
+                    ImageData? nextImage;
+                    if ((nextImage = imageSorter.GetNextImage()) != null)
+                    {
+                        imageVisualizer.ImageVisualize(nextImage.Id, nextImage.Timestamp, nextImage.Type, nextImage.Image);
+                    }
                 };
 
                 // Iniciar el consumo de mensajes

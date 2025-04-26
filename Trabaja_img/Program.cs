@@ -52,7 +52,7 @@ namespace Trabaja_img
 
                     // Publicar el resultado en el intercambio
                     channel.BasicPublish(EXCHANGE, ROUTING_KEY, null, body);
-                    Console.WriteLine($"[Trabajador] Resultado publicada Imagen: Id:{message.Id} Timestamp: {message.Timestamp} Type: {message.Type} Payload: {message.Payload}");
+                    Console.WriteLine($"[Trabajador] Resultado publicada Imagen: Id:{resultMessage.Id} Timestamp: {resultMessage.Timestamp} Type: {resultMessage.Type} Payload: {resultMessage.Payload}");
                 };
 
                 // Iniciar el consumo de mensajes

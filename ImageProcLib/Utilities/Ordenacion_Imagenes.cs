@@ -2,26 +2,41 @@
 
 namespace ImageProcLib.Utilities
 {
-    public class Ordenacion_Imagenes
+    public class ImageData
     {
-        private readonly ConcurrentDictionary <int, string> _imageBuffer = new();
+        public required int Id { get; set; } 
+        public required string Image { get; set; } 
+        public DateTime Timestamp { get; set; } 
+        public required string Type { get; set; } 
+    }
+
+    public class Image_Sorter
+    {
+        private readonly ConcurrentDictionary <int, ImageData> _imageBuffer = new();
         private int _expectedId = 0;
 
-        public void AddImage(int id, string image)
+        public void AddImage(int id, string image, DateTime timestamp, string type)
         {
-            _imageBuffer[id] = image;
+            var imageData = new ImageData
+            {
+                Id = id,
+                Image = image,
+                Timestamp = timestamp,
+                Type = type
+            };
+            _imageBuffer[id] = imageData;
         }
 
-        public string GetNextImage()
+        public ImageData? GetNextImage()
         {
-            if (_imageBuffer.TryRemove(_expectedId, out var image))
+            if (_imageBuffer.TryRemove(_expectedId, out var imageData))
             {
                 _expectedId++;
-                return image;
+                return imageData;
             }
             else
             {
-                return "-1"; // No hay imágenes en orden
+                return null; // No hay imagenes
             }
         }
     }

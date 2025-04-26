@@ -8,7 +8,7 @@ namespace ImageProcLib.Vocabulary
         // Estructura de un mensaje
         public class Message
         {
-            public int Id { get; set; } // Identificador único del mensaje
+            public int Id { get; set; } // Identificador del mensaje
             public required string Type { get; set; } // Tipo de mensaje (e.g., "Image.Raw", "Image.Result")
             public required string Payload { get; set; } // Contenido del mensaje
             public DateTime Timestamp { get; set; } // Marca de tiempo
