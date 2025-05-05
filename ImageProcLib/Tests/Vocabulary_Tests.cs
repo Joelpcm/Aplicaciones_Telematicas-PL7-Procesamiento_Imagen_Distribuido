@@ -22,7 +22,7 @@ namespace ImageProcLib.Tests
             Assert.Equal(id, message.Id);
             Assert.Equal(type, message.Type);
             Assert.Equal(payload, message.Payload);
-            Assert.True(message.Timestamp <= DateTime.UtcNow);
+            Assert.True(message.Timestamp <= DateTime.Now);
         }
 
         [Fact]
