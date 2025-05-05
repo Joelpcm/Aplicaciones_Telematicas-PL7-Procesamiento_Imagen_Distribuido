@@ -118,9 +118,12 @@ namespace Visualiza_img
             const string BINDING_KEY = "Image.*";
 
             // Configurar la conexión a RabbitMQ
-            var factory = new ConnectionFactory() { HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP };
+            var factory = new ConnectionFactory() 
+            { 
+                HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP 
+            };
 
-            // Crear el visualizador de imágenes, en este caso es por consola
+            // Crear el visualizador de imágenes
             var imageVisualizer = new WindowImageVisualizer();
 
             // Crear el ordenador de imagenes
