@@ -19,7 +19,7 @@ namespace Trabaja_img
 
             public  FaceDetectionProcessor()
             {
-                // Cargar el clasificador de caras Haar cascade
+                // Cargar el archivo de clasificador de caras
                 string haarCascadePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml");
 
                 // Verificar que el archivo existe
@@ -46,12 +46,12 @@ namespace Trabaja_img
             {
                 try
                 {
-                    // Decodificar la imagen desde bytes
+                    // Lee la imagen desde bytes
                     using var srcImage = Cv2.ImDecode(imageBytes, ImreadModes.Color);
 
                     if (srcImage.Empty())
                     {
-                        Console.WriteLine("[Trabajador] Error: No se pudo decodificar la imagen");
+                        Console.WriteLine("[Trabajador] Error: No se pudo leer la imagen");
                         return imageBytes; // Devolver la imagen original en caso de error
                     }
 
