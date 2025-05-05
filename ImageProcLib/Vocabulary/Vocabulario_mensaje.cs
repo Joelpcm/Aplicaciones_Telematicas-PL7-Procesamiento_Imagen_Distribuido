@@ -9,7 +9,7 @@ namespace ImageProcLib.Vocabulary
         public class Message
         {
             public int Id { get; set; } // Identificador del mensaje
-            public required string Type { get; set; } // Tipo de mensaje (e.g., "Image.Raw", "Image.Result")
+            public required string Type { get; set; } // Tipo de mensaje ("Image.Raw", "Image.Result",...)
             public required byte[] Payload { get; set; } // Contenido del mensaje
             public DateTime Timestamp { get; set; } // Marca de tiempo
         }
@@ -37,7 +37,7 @@ namespace ImageProcLib.Vocabulary
                 string json = Encoding.UTF8.GetString(body);
 
                 // Intentar deserializar el mensaje
-        var message = JsonSerializer.Deserialize<Message>(json);
+                var message = JsonSerializer.Deserialize<Message>(json);
 
         // Verificar si el resultado es null
         if (message == null)
@@ -62,7 +62,7 @@ namespace ImageProcLib.Vocabulary
                 Id = id,
                 Type = type,
                 Payload = payload,
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.Now  // Ajustar la hora a la del ordenador
             };
         }
     }
