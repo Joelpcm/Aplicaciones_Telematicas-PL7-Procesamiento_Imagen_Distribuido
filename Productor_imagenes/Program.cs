@@ -14,7 +14,6 @@ namespace Productor_imagenes
     internal class WebcamImageSource : IFuente_Imagen
     {
         private readonly VideoCapture _capture;
-        private int _frameCounter = 0;
 
         public WebcamImageSource()
         {
@@ -51,7 +50,10 @@ namespace Productor_imagenes
             const string ROUTING_KEY = "Image.Raw";
 
             // Configuración de la conexión a RabbitMQ
-            var factory = new ConnectionFactory() { HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP };
+            var factory = new ConnectionFactory() 
+            { 
+                HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP 
+            };
 
             // Usar la interfaz IFuente_Imagen para obtener imágenes
             var imageSource = new WebcamImageSource();
