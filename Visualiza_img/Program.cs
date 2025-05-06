@@ -16,18 +16,20 @@ namespace Visualiza_img
 {
     internal class WindowImageVisualizer : IVisualizador_Imagen
     {
-        private const string WindowName = "Image Visualizer";
+        private readonly string _windowName;
         private bool _windowInitialized = false;
         private readonly ConcurrentQueue<(int id, DateTime timestamp, string type, Mat image)> _imageQueue = new();
         private readonly Thread _uiThread;
 
-        public WindowImageVisualizer()
+        public WindowImageVisualizer(string name)
         {
+            _windowName = name;
+
             // Inicializar la ventana en el hilo
             _uiThread = new Thread(UILoop)
             {
                 IsBackground = true,
-                Name = "OpenCV UI Thread"
+                Name = $"{name} UI Thread"
             };
             _uiThread.Start();
 
@@ -39,7 +41,7 @@ namespace Visualiza_img
             try
             {
                 // Inicializar ventana en este hilo
-                Cv2.NamedWindow(WindowName, WindowFlags.AutoSize | WindowFlags.KeepRatio);
+                Cv2.NamedWindow(_windowName, WindowFlags.AutoSize | WindowFlags.KeepRatio);
                 _windowInitialized = true;
 
                 Mat? lastImage = null;
@@ -58,7 +60,7 @@ namespace Visualiza_img
                                     HersheyFonts.HersheySimplex, 0.5, Scalar.White);
 
                         // Mostrar la imagen
-                        Cv2.ImShow(WindowName, image);
+                        Cv2.ImShow(_windowName, image);
                         lastImage = image;
 
                         Console.WriteLine($"[Visualizador] Showing image: Id:{id} Timestamp:{timestamp}");
@@ -66,7 +68,7 @@ namespace Visualiza_img
                     else if (lastImage != null)
                     {
                         // Mantener mostrando la última imagen mientras no hay nueva
-                        Cv2.ImShow(WindowName, lastImage);
+                        Cv2.ImShow(_windowName, lastImage);
                     }
 
                     // Procesar eventos de GUI
@@ -81,7 +83,7 @@ namespace Visualiza_img
             {
                 if (_windowInitialized)
                 {
-                    Cv2.DestroyWindow(WindowName);
+                    Cv2.DestroyWindow(_windowName);
                 }
             }
         }
@@ -123,8 +125,10 @@ namespace Visualiza_img
                 HostName = ImageProcLib.Constants.Constants.RabbitMQ_Server_IP 
             };
 
-            // Crear el visualizador de imágenes
-            var imageVisualizer = new WindowImageVisualizer();
+            // Crear el visualizador de imágenes resultado
+            var resultVisualizer = new WindowImageVisualizer("resultVisualizer");
+
+            var producerVisualizer = new WindowImageVisualizer("producerVisualizer");
 
             // Crear el ordenador de imagenes
             var imageSorter = new Image_Sorter();
@@ -154,13 +158,19 @@ namespace Visualiza_img
                     if (message.Type == "Image.Result")
                     {
                         imageSorter.AddImage(message.Id, message.Payload, message.Timestamp, message.Type);
+
+                        // Intentar mostrar las imágenes en orden
+                        ImageData? nextImage;
+                        if ((nextImage = imageSorter.GetNextImage()) != null)
+                        {
+                            resultVisualizer.ImageVisualize(nextImage.Id, nextImage.Timestamp, nextImage.Type, nextImage.Image);
+                        }
                     }
 
-                    // Intentar mostrar las imágenes en orden
-                    ImageData? nextImage;
-                    if ((nextImage = imageSorter.GetNextImage()) != null)
+                    // Mostrar la imagen del productor
+                    if(message.Type == "Image.Raw")
                     {
-                        imageVisualizer.ImageVisualize(nextImage.Id, nextImage.Timestamp, nextImage.Type, nextImage.Image);
+                        producerVisualizer.ImageVisualize(message.Id, message.Timestamp, message.Type, message.Payload);
                     }
                 };
 
