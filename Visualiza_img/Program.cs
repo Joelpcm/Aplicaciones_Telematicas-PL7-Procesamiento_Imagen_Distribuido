@@ -70,7 +70,7 @@ namespace Visualiza_img
                     }
 
                     // Procesar eventos de GUI
-                    int key = Cv2.WaitKey(30);
+                    int key = Cv2.WaitKey(1);
                 }
             }
             catch (Exception ex)

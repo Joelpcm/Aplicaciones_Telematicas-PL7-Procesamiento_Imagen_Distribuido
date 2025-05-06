@@ -8,6 +8,6 @@ namespace ImageProcLib.Constants
 {
     public class Constants
     {
-        public const string RabbitMQ_Server_IP = "10.38.20.69"; // IP del servidor RabbitMQ (maquina Ubuntu en este caso)
+        public const string RabbitMQ_Server_IP = "10.38.18.30"; // IP del servidor RabbitMQ (maquina Ubuntu en este caso)
     }
 }
